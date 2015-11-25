@@ -12,12 +12,17 @@ features =   [
             "short_profile_3h_diff_bikes", "short_profile_bikes", "bikes"]
 
 features_num =  [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+
+# Features to remove: All timestamp info except weekhour...
 remv_features = [4,5,6,7,8,9]
 
+# Remove unwanted features.
 for num in sorted(remv_features, reverse=True):
     del features_num[num]
     del features[num]
 print features
+
+# Read in csv file to matrix
 data = np.genfromtxt('Train/station_201_deploy.csv', dtype=float, comments='#', delimiter=',',
                         skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
                         filling_values='0', usecols=tuple(features_num),
