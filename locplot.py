@@ -50,19 +50,5 @@ for x in range(201,275):
 #print(output[0])
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.scatter([l[1] for l in output],[l2[2] for l2 in output],[l2[0] for l3 in output])
+ax.scatter([l[1] for l in output],[l2[2] for l2 in output],s=[1+5*l3[0] for l3 in output])
 plt.show()
-#print(data)
-#print(data.size)
-# Change these strings according to what you want to plot!
-#x_var = "weekhour"
-#y_var = "bikes"
-
-#fig = plt.figure()
-#ax = fig.add_subplot(111)
-#ax.set_xlabel(x_var)
-#ax.set_ylabel(y_var)
-#ax1 = heading.index(x_var)
-#ax2 = heading.index(y_var)
-#ax.plot(data[:,ax1], data[:,ax2])
-#plt.show()*/
