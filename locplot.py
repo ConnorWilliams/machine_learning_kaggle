@@ -37,7 +37,7 @@ for x in range(201,240):
 #print(output[0])
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.plot(output[:,1], output[:,2])
+ax.scatter([l[1] for l in output],[l2[2] for l2 in output],[l2[0] for l3 in output])
 plt.show()
 #print(data)
 #print(data.size)
