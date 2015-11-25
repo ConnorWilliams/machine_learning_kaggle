@@ -11,7 +11,8 @@ heading =   ["station", "latitude", "longitude", "numDocks,"
             "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
             "short_profile_3h_diff_bikes", "short_profile_bikes", "bikes"]
 
-for x in range(201,202):
+output=[]
+for x in range(201,240):
       filestring = 'Train/station_' +str(x) +'_deploy.csv'
       data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                         skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
@@ -19,13 +20,22 @@ for x in range(201,202):
                         names=None, excludelist=None, deletechars=None, replace_space='_',
                         autostrip=False, case_sensitive=True, defaultfmt='f%i',
                         unpack=None, usemask=False, loose=True, invalid_raise=True)
-      print(data[0][0])
+      numavg = 0
+      avg =0 
       for y in data:
-            print(y[8])
-
+            if y[heading.index("weekhour")] == 49:
+                  avg += y[heading.index("bikes")]
+                  numavg+=1
+      avg /= numavg
+      out = [avg,data[1][heading.index("latitude")],data[1][heading.index("longitude")]]
+      output.append(out)
+#print(output[0])
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.plot(output[:,1], output[:,2])
+plt.show()
 #print(data)
 #print(data.size)
-
 # Change these strings according to what you want to plot!
 #x_var = "weekhour"
 #y_var = "bikes"
