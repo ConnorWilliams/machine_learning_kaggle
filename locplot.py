@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+from sklearn import linear_model
 np.set_printoptions(threshold=np.nan)
-
 
 features =   [
             "station", "latitude", "longitude", "numDocks",
@@ -21,7 +20,7 @@ unwanted_features = [4,5,6,7,8,9]
 for num in sorted(unwanted_features, reverse=True):
     del features_num[num]
     del features[num]
-print features
+#print features
 
 #create empty list
 output=[]
@@ -40,7 +39,7 @@ for x in range(201,275):
       #for every record in the station
       for y in data:
             #if its time is
-            if y[features.index("weekhour")] == 49:
+            if y[features.index("weekhour")] == 11:
                   avg += y[features.index("bikes")]
                   numavg+=1
       avg /= numavg
@@ -50,5 +49,5 @@ for x in range(201,275):
 #print(output[0])
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.scatter([l[1] for l in output],[l2[2] for l2 in output],s=[1+5*l3[0] for l3 in output])
+ax.scatter([l[1] for l in output],[l2[2] for l2 in output],s=[10+10*l3[0] for l3 in output])
 plt.show()
