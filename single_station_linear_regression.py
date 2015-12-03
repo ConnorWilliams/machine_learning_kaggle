@@ -30,7 +30,7 @@ filestring = 'Train/station_201_deploy.csv'
 # Read in training and test data
 training_features = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                  filling_values='0', usecols=(1,2),
+                  filling_values='0', usecols=features_num,
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
@@ -40,15 +40,11 @@ training_target = training_data = np.genfromtxt(filestring, dtype=float, comment
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
+
+
 test_features = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                  filling_values='0', usecols=(1,2),
-                  names=None, excludelist=None, deletechars=None, replace_space='_',
-                  autostrip=False, case_sensitive=True, defaultfmt='f%i',
-                  unpack=None, usemask=False, loose=True, invalid_raise=True)
-test_target = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter=',',
-                  skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                  filling_values='0', usecols=target_num,
+                  filling_values='0', usecols=(2,3),
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
@@ -59,7 +55,9 @@ test_target = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter=','
 
 clf = linear_model.LinearRegression()
 clf.fit (training_features, training_target)
-
 print('Coefficients: \n', clf.coef_)
-print("Residual sum of squares: %.2f" % np.mean((clf.predict(test_features) - test_target) ** 2))
-print('Variance score: %.2f' % clf.score(test_features, test_target))
+
+print clf.predict(test_features)
+
+# print("Residual sum of squares: %.2f" % np.mean((clf.predict(test_features) - test_target) ** 2))
+# print('Variance score: %.2f' % clf.score(test_features, test_target))
