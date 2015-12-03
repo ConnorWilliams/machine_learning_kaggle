@@ -25,7 +25,7 @@ target_num = 24
 #     del features[num]
 
 # Where is our training data stored?
-filestring = 'Train/station_201_deploy.csv'
+filestring = 'Train/station_202_deploy.csv'
 
 # Read in training and test data
 training_features = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
