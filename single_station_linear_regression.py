@@ -17,12 +17,12 @@ features_num =  [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,2
 target_num = 24
 
 # Features to remove: All timestamp info except weekhour...
-unwanted_features = [4,5,6,7,8,9,24]
+#unwanted_features = [4,5,6,7,8,9,24]
 
 # Remove unwanted features.
-for num in sorted(unwanted_features, reverse=True):
-    del features_num[num]
-    del features[num]
+# for num in sorted(unwanted_features, reverse=True):
+#     del features_num[num]
+#     del features[num]
 
 # Where is our training data stored?
 filestring = 'Train/station_201_deploy.csv'
@@ -30,7 +30,7 @@ filestring = 'Train/station_201_deploy.csv'
 # Read in training and test data
 training_features = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                  filling_values='0', usecols=(1,2),
+                  filling_values='0', usecols=(1,2,features.index("weekday"),features.index("weekhour")),
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
@@ -44,7 +44,7 @@ training_target = training_data = np.genfromtxt(filestring, dtype=float, comment
 
 test_features = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                  filling_values='0', usecols=(2,3),
+                  filling_values='0', usecols=(2,3,features.index("weekday"),features.index("weekhour")),
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
@@ -58,9 +58,9 @@ clf.fit (training_features, training_target)
 print('Coefficients: \n', clf.coef_)
 output = open("sub.csv","w")
 preds = clf.predict(test_features)
-output.write("Id,\"bikes\"")
+output.write("Id,\"bikes\"" +"\n")
 for x in range(0,preds.size):
-      output.write(str(x)+","+str(preds[x])+ "\n")
+      output.write(str(x+1)+","+str(preds[x])+ "\n")
 output.close()
 
 
