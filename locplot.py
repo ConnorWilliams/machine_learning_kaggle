@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 np.set_printoptions(threshold=np.nan)
 
-
+#weekhour - integer from 1 to 168 representing the hour of the week (Monday 0h is weekhour 1, Sunday 23h is weekhour 168)
 features =   [
             "station", "latitude", "longitude", "numDocks",
             "timestamp", "year", "month", "day", "hour", "weekday", "weekhour", "isHoliday",
@@ -22,8 +22,10 @@ for num in sorted(unwanted_features, reverse=True):
     del features_num[num]
     del features[num]
 print features
-
 #create empty list
+day = 0 #monday =0
+hour = 10 #0 = 00:00
+weekhour = day*24 + hour
 output=[]
 #for all stations
 for x in range(201,275):
@@ -40,7 +42,7 @@ for x in range(201,275):
       #for every record in the station
       for y in data:
             #if its time is
-            if y[features.index("weekhour")] == 49:
+            if y[features.index("weekhour")] == weekhour:
                   avg += y[features.index("bikes")]
                   numavg+=1
       avg /= numavg
@@ -50,5 +52,9 @@ for x in range(201,275):
 #print(output[0])
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.scatter([l[1] for l in output],[l2[2] for l2 in output],s=[1+5*l3[0] for l3 in output])
+
+ax.scatter([l[1] for l in output],[l2[2] for l2 in output],s=[1+10*l3[0] for l3 in output])
+plt.title("Monday 10am")
+plt.ylabel("Longitude")
+plt.xlabel("Lattitude")
 plt.show()
