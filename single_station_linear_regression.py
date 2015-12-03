@@ -28,13 +28,13 @@ target_num = 24
 filestring = 'Train/station_201_deploy.csv'
 
 # Read in training and test data
-training_features = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
+training_features = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
                   filling_values='0', usecols=(1,2,features.index("weekday"),features.index("weekhour")),
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
-training_target = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
+training_target = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
                   filling_values='0', usecols=target_num,
                   names=None, excludelist=None, deletechars=None, replace_space='_',

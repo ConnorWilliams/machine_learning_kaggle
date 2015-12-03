@@ -31,7 +31,7 @@ hour = 10 #0 = 00:00
 weekhour = day*24 + hour
 output=[]
 #for all stations
-for x in range(201,275):
+for x in range(201,276):
       filestring = 'Train/station_' +str(x) +'_deploy.csv'
       data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                         skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
