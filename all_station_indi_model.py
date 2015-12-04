@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sklearn.tree as tree
+import sklearn.linear_model as linear_model
 np.set_printoptions(threshold=np.nan)
 
 train_feat =   [
@@ -70,7 +71,7 @@ for x in range(201,276):
       #raw_input("Press Enter to continue...")
       idx = (x-201)*30
       for y in range(idx,idx+30):
-           output.write(str(y+1)+","+str( int(preds[y]))+ "\n")
+           output.write(str(y+1)+","+str( round(preds[y]))+ "\n")
 
 
 output.close()
