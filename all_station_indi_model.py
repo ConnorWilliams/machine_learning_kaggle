@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sklearn.tree as tree
 import sklearn.linear_model as linear_model
+from sklearn import svm
 np.set_printoptions(threshold=np.nan)
 
 train_feat =   [
@@ -31,18 +32,18 @@ target_num = 24
 # for num in sorted(unwanted_features, reverse=True):
 #     del features_num[num]
 #     del features[num]
-selectedFeatures = ["longitude","latitude","weekday","weekhour","isHoliday","full_profile_3h_diff_bikes"]
+selectedFeatures = ["longitude","latitude","weekday","weekhour","bikes_3h_ago"]
 testTuple = ()
 trainTuple = ()
 for x in selectedFeatures:
       testIdx = test_feat.index(x)
       trainIdx = train_feat.index(x)
-      testTuple = testTuple + (idx,)
+      testTuple = testTuple + (testIdx,)
       trainTuple = trainTuple + (trainIdx,)
 
 test_features = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                  filling_values='0', usecols=None,
+                  filling_values='0', usecols=testTuple,
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
@@ -52,13 +53,13 @@ output.write("Id,\"bikes\"" +"\n")
 for x in range(201,276):
       filestring = 'Train/station_' +str(x) +'_deploy.csv'
       # Read in training and test data
-      training_features = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
+      training_features = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                         skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
                         filling_values='0', usecols=trainTuple,
                         names=None, excludelist=None, deletechars=None, replace_space='_',
                         autostrip=False, case_sensitive=True, defaultfmt='f%i',
                         unpack=None, usemask=False, loose=True, invalid_raise=True)
-      training_target = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
+      training_target = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                         skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
                         filling_values='0', usecols=train_feat.index("bikes"),
                         names=None, excludelist=None, deletechars=None, replace_space='_',
@@ -73,14 +74,14 @@ for x in range(201,276):
     #   training_features[:,2] = training_features[:,2] % 24
     #   test_features[:,2] = test_features[:,2] % 24
 
-      clf = tree.DecisionTreeRegressor()
+      clf = svm.SVR()
       clf.fit (training_features, training_target)
-      preds = clf.predict(training_features)
+      preds = clf.predict(test_features)
       #print preds
       #raw_input("Press Enter to continue...")
       idx = (x-201)*30
       for y in range(idx,idx+30):
-           output.write(str(y+1)+","+str( round(preds[y]))+ "\n")
+           output.write(str(y+1)+","+str( preds[y])+ "\n")
 
 
 output.close()

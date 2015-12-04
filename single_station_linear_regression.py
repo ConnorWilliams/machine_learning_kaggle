@@ -26,7 +26,7 @@ target_num = 24
 #     del features[num]
 
 # Where is our training data stored?
-selectedFeatures = ["longitude","latitude","weekday","weekhour","isHoliday","full_profile_3h_diff_bikes","temperature.C","precipitation.l.m2"]
+selectedFeatures = ["bikes","hour","isHoliday","weekhour"]
 
 trainTuple = ()
 for x in selectedFeatures:
@@ -53,7 +53,7 @@ training_target  = np.genfromtxt(filestring, dtype=float, comments='#', delimite
 # Put our data through some regression models. #
 ################################################
 
-clf = svm.SVR(kernel='sigmoid')
+clf = svm.SVR()
 clf.fit (training_features, training_target)
 #print('Coefficients: \n', clf.coef_)
 preds = clf.predict(training_features)
