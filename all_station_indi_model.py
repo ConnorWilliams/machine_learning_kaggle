@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import linear_model
+import sklearn.tree as tree
 np.set_printoptions(threshold=np.nan)
 
 features =   [
@@ -52,7 +52,7 @@ for x in range(201,276):
       # Put our data through some regression models. #
       ################################################
 
-      clf = linear_model.LinearRegression()
+      clf = tree.DecisionTreeClassifier()
       clf.fit (training_features, training_target)
       #print('Coefficients: \n', clf.coef_)
       preds = clf.predict(test_features)
@@ -60,11 +60,6 @@ for x in range(201,276):
       print(str(idx) + filestring + '\n')
       for y in range(idx,idx+30):
             output.write(str(y+1)+","+str(preds[y])+ "\n")
-
-
-
-
-
 output.close()
 
 
