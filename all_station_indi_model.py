@@ -31,9 +31,18 @@ target_num = 24
 # for num in sorted(unwanted_features, reverse=True):
 #     del features_num[num]
 #     del features[num]
+selectedFeatures = ["longitude","latitude","weekday","weekhour","isHoliday","full_profile_3h_diff_bikes"]
+testTuple = ()
+trainTuple = ()
+for x in selectedFeatures:
+      testIdx = test_feat.index(x)
+      trainIdx = train_feat.index(x)
+      testTuple = testTuple + (idx,)
+      trainTuple = trainTuple + (trainIdx,)
+
 test_features = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                  filling_values='0', usecols=(test_feat.index("latitude"), test_feat.index("longitude"), test_feat.index("weekhour")),
+                  filling_values='0', usecols=None,
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
@@ -45,7 +54,7 @@ for x in range(201,276):
       # Read in training and test data
       training_features = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                         skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                        filling_values='0', usecols=(train_feat.index("latitude"), train_feat.index("longitude"), train_feat.index("weekhour")),
+                        filling_values='0', usecols=trainTuple,
                         names=None, excludelist=None, deletechars=None, replace_space='_',
                         autostrip=False, case_sensitive=True, defaultfmt='f%i',
                         unpack=None, usemask=False, loose=True, invalid_raise=True)
@@ -64,9 +73,9 @@ for x in range(201,276):
     #   training_features[:,2] = training_features[:,2] % 24
     #   test_features[:,2] = test_features[:,2] % 24
 
-      clf = linear_model.LinearRegression()
+      clf = tree.DecisionTreeRegressor()
       clf.fit (training_features, training_target)
-      preds = clf.predict(test_features)
+      preds = clf.predict(training_features)
       #print preds
       #raw_input("Press Enter to continue...")
       idx = (x-201)*30
