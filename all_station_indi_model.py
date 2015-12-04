@@ -3,13 +3,20 @@ import matplotlib.pyplot as plt
 import sklearn.tree as tree
 np.set_printoptions(threshold=np.nan)
 
-features =   [
+train_feat =   [
             "station", "latitude", "longitude", "numDocks",
             "timestamp", "year", "month", "day", "hour", "weekday", "weekhour", "isHoliday",
             "windMaxSpeed.m.s", "windMeanSpeed.m.s", "windDirection.grades",
             "temperature.C", "relHumidity.HR", "airPressure.mb", "precipitation.l.m2",
             "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
             "short_profile_3h_diff_bikes", "short_profile_bikes", "bikes"]
+test_feat =   [
+            "Id", "station", "latitude", "longitude", "numDocks",
+            "timestamp", "year", "month", "day", "hour", "weekday", "weekhour", "isHoliday",
+            "windMaxSpeed.m.s", "windMeanSpeed.m.s", "windDirection.grades",
+            "temperature.C", "relHumidity.HR", "airPressure.mb", "precipitation.l.m2",
+            "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
+            "short_profile_3h_diff_bikes", "short_profile_bikes"]
 
 features_num =  [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
 
@@ -25,7 +32,7 @@ target_num = 24
 #     del features[num]
 test_features = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                  filling_values='0', usecols=(2,3,features.index("weekday"),features.index("weekhour")),
+                  filling_values='0', usecols=(test_feat.index("latitude"), test_feat.index("longitude"), test_feat.index("weekhour")),
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
@@ -37,13 +44,13 @@ for x in range(201,276):
       # Read in training and test data
       training_features = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                         skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                        filling_values='0', usecols=(1,2,features.index("weekday"),features.index("weekhour")),
+                        filling_values='0', usecols=(train_feat.index("latitude"), train_feat.index("longitude"), train_feat.index("weekhour")),
                         names=None, excludelist=None, deletechars=None, replace_space='_',
                         autostrip=False, case_sensitive=True, defaultfmt='f%i',
                         unpack=None, usemask=False, loose=True, invalid_raise=True)
       training_target = training_data = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                         skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                        filling_values='0', usecols=target_num,
+                        filling_values='0', usecols=train_feat.index("bikes"),
                         names=None, excludelist=None, deletechars=None, replace_space='_',
                         autostrip=False, case_sensitive=True, defaultfmt='f%i',
                         unpack=None, usemask=False, loose=True, invalid_raise=True)
@@ -52,14 +59,20 @@ for x in range(201,276):
       # Put our data through some regression models. #
       ################################################
 
-      clf = tree.DecisionTreeClassifier()
+      # Turn weekour in to day hour
+    #   training_features[:,2] = training_features[:,2] % 24
+    #   test_features[:,2] = test_features[:,2] % 24
+
+      clf = linear_model.LinearRegression()
       clf.fit (training_features, training_target)
-      #print('Coefficients: \n', clf.coef_)
       preds = clf.predict(test_features)
+      #print preds
+      #raw_input("Press Enter to continue...")
       idx = (x-201)*30
-      print(str(idx) + filestring + '\n')
       for y in range(idx,idx+30):
-            output.write(str(y+1)+","+str(preds[y])+ "\n")
+           output.write(str(y+1)+","+str( int(preds[y]))+ "\n")
+
+
 output.close()
 
 
