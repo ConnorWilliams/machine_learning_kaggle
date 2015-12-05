@@ -1,3 +1,5 @@
+# This just concatenates all the training data in to one big csv file.
+
 fout=open("general_station_train.csv","a")
 
 # first file:

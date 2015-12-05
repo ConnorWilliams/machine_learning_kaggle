@@ -20,19 +20,10 @@ test_feat =   [
             "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
             "short_profile_3h_diff_bikes", "short_profile_bikes"]
 
-features_num =  [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
-
 # Our target variable is 'bikes'
 target_num = 24
 
-# Features to remove: All timestamp info except weekhour...
-#unwanted_features = [4,5,6,7,8,9,24]
-
-# Remove unwanted features.
-# for num in sorted(unwanted_features, reverse=True):
-#     del features_num[num]
-#     del features[num]
-selectedFeatures = ["longitude","latitude","weekday","weekhour","bikes_3h_ago"]
+selectedFeatures = ["isHoliday","day","bikes_3h_ago","short_profile_3h_diff_bikes","short_profile_bikes", "temperature.C"]
 testTuple = ()
 trainTuple = ()
 for x in selectedFeatures:
@@ -48,7 +39,7 @@ test_features = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter='
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
 # Where is our training data stored?
-output = open("sub.csv","w")
+output = open("individual_sub.csv","w")
 output.write("Id,\"bikes\"" +"\n")
 for x in range(201,276):
       filestring = 'Train/station_' +str(x) +'_deploy.csv'
@@ -67,7 +58,7 @@ for x in range(201,276):
                         unpack=None, usemask=False, loose=True, invalid_raise=True)
 
       ################################################
-      # Put our data through some regression models. #
+      # Put our data through some regression model. #
       ################################################
 
       # Turn weekour in to day hour
@@ -83,9 +74,4 @@ for x in range(201,276):
       for y in range(idx,idx+30):
            output.write(str(y+1)+","+str( preds[y])+ "\n")
 
-
 output.close()
-
-
-# print("Residual sum of squares: %.2f" % np.mean((clf.predict(test_features) - test_target) ** 2))
-# print('Variance score: %.2f' % clf.score(test_features, test_target))
