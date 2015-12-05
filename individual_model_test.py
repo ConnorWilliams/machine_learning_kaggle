@@ -23,7 +23,7 @@ test_feat =   [
 # Our target variable is 'bikes'
 target_num = 24
 
-selectedFeatures = ["isHoliday","day","bikes_3h_ago","short_profile_3h_diff_bikes","short_profile_bikes", "temperature.C"]
+selectedFeatures = ["isHoliday","day","weekhour","bikes_3h_ago","short_profile_3h_diff_bikes","short_profile_bikes", "temperature.C"]
 testTuple = ()
 trainTuple = ()
 for x in selectedFeatures:
@@ -32,15 +32,23 @@ for x in selectedFeatures:
       testTuple = testTuple + (testIdx,)
       trainTuple = trainTuple + (trainIdx,)
 
-test_features = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter=',',
+test_features = np.genfromtxt('mock_test.csv', dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
                   filling_values='0', usecols=testTuple,
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
+test_target  = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
+                skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
+                filling_values='0', usecols=target_num+1,
+                names=None, excludelist=None, deletechars=None, replace_space='_',
+                autostrip=False, case_sensitive=True, defaultfmt='f%i',
+                unpack=None, usemask=False, loose=True, invalid_raise=True)
+
 # Where is our training data stored?
 output = open("individual_sub.csv","w")
 output.write("Id,\"bikes\"" +"\n")
+
 for x in range(201,276):
       filestring = 'Train/station_' +str(x) +'_deploy.csv'
       # Read in training and test data
@@ -68,10 +76,16 @@ for x in range(201,276):
       clf = svm.SVR()
       clf.fit (training_features, training_target)
       preds = clf.predict(test_features)
-      #print preds
-      #raw_input("Press Enter to continue...")
       idx = (x-201)*30
       for y in range(idx,idx+30):
            output.write(str(y+1)+","+str( preds[y])+ "\n")
 
 output.close()
+
+
+truevalues = []
+predicted= []
+for x in range(0,preds.size-3):
+      truevalues.append(training_target[x+3])
+      predicted.append(preds[x])
+print mean_absolute_error(truevalues,predicted)
