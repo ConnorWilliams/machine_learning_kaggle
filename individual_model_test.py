@@ -2,8 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sklearn.tree as tree
 import sklearn.linear_model as linear_model
+from sklearn.metrics import mean_absolute_error
 from sklearn import svm
 np.set_printoptions(threshold=np.nan)
+
+mock = 0
+
+if mock:
+    test_file = 'mock_test.csv'
+else:
+    test_file = 'test.csv'
 
 train_feat =   [
             "station", "latitude", "longitude", "numDocks",
@@ -20,9 +28,6 @@ test_feat =   [
             "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
             "short_profile_3h_diff_bikes", "short_profile_bikes"]
 
-# Our target variable is 'bikes'
-target_num = 24
-
 selectedFeatures = ["isHoliday","day","weekhour","bikes_3h_ago","short_profile_3h_diff_bikes","short_profile_bikes", "temperature.C"]
 testTuple = ()
 trainTuple = ()
@@ -32,20 +37,21 @@ for x in selectedFeatures:
       testTuple = testTuple + (testIdx,)
       trainTuple = trainTuple + (trainIdx,)
 
-test_features = np.genfromtxt('mock_test.csv', dtype=float, comments='#', delimiter=',',
+test_features = np.genfromtxt(test_file, dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
                   filling_values='0', usecols=testTuple,
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
-test_target  = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
+if mock:
+    truevalues  = np.genfromtxt(test_file, dtype=float, comments='#', delimiter=',',
                 skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                filling_values='0', usecols=target_num+1,
+                filling_values='0', usecols=25,
                 names=None, excludelist=None, deletechars=None, replace_space='_',
                 autostrip=False, case_sensitive=True, defaultfmt='f%i',
                 unpack=None, usemask=False, loose=True, invalid_raise=True)
+# print test_features
 
-# Where is our training data stored?
 output = open("individual_sub.csv","w")
 output.write("Id,\"bikes\"" +"\n")
 
@@ -82,10 +88,8 @@ for x in range(201,276):
 
 output.close()
 
-
-truevalues = []
-predicted= []
-for x in range(0,preds.size-3):
-      truevalues.append(training_target[x+3])
-      predicted.append(preds[x])
-print mean_absolute_error(truevalues,predicted)
+if mock:
+    predicted = []
+    for x in range(0,preds.size):
+          predicted.append(preds[x])
+    print mean_absolute_error(truevalues,predicted)
