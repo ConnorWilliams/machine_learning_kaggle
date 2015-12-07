@@ -3,7 +3,7 @@ import numpy as np
 
 
 # This just concatenates all the training data in to one big csv file.
-fout=open("general_station_train.csv","a")
+fout=open("general_station_train.csv","w")
 
 # first file:
 for line in open("Train/station_201_deploy.csv"):
@@ -19,7 +19,7 @@ fout.close()
 
 
 # This makes a mock test csv file.
-fout=open("mock_test.csv","a")
+fout=open("mock_test.csv","w")
 # first line:
 fout.write("Id,"+open("Train/station_201_deploy.csv").next())
 
@@ -31,7 +31,7 @@ for x in range(201,276):
     filelines = f.readlines()
     for n in lines:
         line = filelines[n].split(',')
-        trueline = filelines[n+3].split(',')
+        trueline = filelines[n].split(',')
         #print 'hour' + line[10] + ' bikes' + line[24]
         #print 'hour' + trueline[10] + ' bikes' + trueline[24]
 

@@ -16,7 +16,7 @@ train_feat =   [
 target_num = 24
 
 # Where is our training data stored?
-selectedFeatures = ["bikes","hour","isHoliday","weekhour"]
+selectedFeatures = ["station","weekday"]
 
 trainTuple = ()
 for x in selectedFeatures:
@@ -25,13 +25,33 @@ for x in selectedFeatures:
 filestring = 'Train/station_202_deploy.csv'
 
 # Read in training and test data
-training_features  = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
+def convert2 (string):
+      if(string == '""Monday""'):
+            return 1
+      elif(string == '""Tuesday""'):
+            return 2
+      elif(string == '""Wednesday""'):
+            return 3
+      elif(string == '""Thursday""'):
+            return 4
+      elif(string == '""Friday""'):
+            return 5
+      elif(string == '""Saturday""'):
+            return 6
+      elif(string == '""Sunday""'):
+            return 7
+      else:
+            return 10
+
+def convert(string):
+      return 10.0
+training_features  = np.genfromtxt(filestring, dtype=None, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
                   filling_values='0', usecols=trainTuple,
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
-training_target  = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
+training_target  = np.genfromtxt(filestring, dtype=None, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
                   filling_values='0', usecols=target_num,
                   names=None, excludelist=None, deletechars=None, replace_space='_',
@@ -42,7 +62,7 @@ training_target  = np.genfromtxt(filestring, dtype=float, comments='#', delimite
 ################################################
 # Put our data through some regression models. #
 ################################################
-
+print training_features
 clf = svm.SVR()
 clf.fit (training_features, training_target)
 #print('Coefficients: \n', clf.coef_)
