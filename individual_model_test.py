@@ -29,7 +29,10 @@ test_feat =   [
             "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
             "short_profile_3h_diff_bikes", "short_profile_bikes"]
 
-selectedFeatures = ["bikes_3h_ago", "station"]
+selectedFeatures = [
+            "weekhour", "isHoliday", "day", "temperature.C",
+            "bikes_3h_ago",
+            "short_profile_3h_diff_bikes", "short_profile_bikes"]
 testTuple = ()
 trainTuple = ()
 for x in selectedFeatures:
@@ -90,15 +93,15 @@ for x in range(201,276):
 
       #print training_target
       #print training_features 
-      clf = linear_model.LinearRegression()
+      clf = svm.SVR()
       clf.fit (training_features, training_target)
       #print clf.coef_
       preds = clf.predict(test_features)
       idx = (x-201)*30
-      if idx == 0:
-        print preds
+      # if idx == 0:
+      #   print preds
       for y in range(idx,idx+30):
-          output.write(str(y+1)+","+str( preds[y])+ "\n")
+          output.write(str(y+1)+","+str(preds[y])+ "\n")
           if mock:
             predicted.append(preds[y])
 output.close()
