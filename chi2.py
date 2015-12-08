@@ -94,6 +94,9 @@ training_target = np.genfromtxt(filestring, dtype=float, comments='#', delimiter
 #print training_target
 #print training_features 
 scores, pvalues = f_regression(training_features,training_target )
-for x in range(0,pvalues.size):
-  print selectedFeatures[x] + ' '+ str(pvalues[x])
+output = []
+for x in range(0, pvalues.size):
+  output.append([selectedFeatures[x],pvalues[x]])
+np.sort(output,axis=0)
+print output
 
