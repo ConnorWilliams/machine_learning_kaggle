@@ -67,7 +67,7 @@ if mock:
 
 predicted = []
 
-filestring = 'Train/station_' +str(201) +'_deploy.csv'
+filestring = 'Train/station_' +str(203) +'_deploy.csv'
 # Read in training and test data
 training_features = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
@@ -96,7 +96,10 @@ training_target = np.genfromtxt(filestring, dtype=float, comments='#', delimiter
 scores, pvalues = f_regression(training_features,training_target )
 output = []
 for x in range(0, pvalues.size):
-  output.append([selectedFeatures[x],pvalues[x]])
-np.sort(output,axis=0)
-print output
+  output.append((selectedFeatures[x],pvalues[x]))
+dtype = [('feature','S20'),('pval',float)]
+a = np.array(output,dtype=dtype)
+print np.sort(a,order = 'pval')
+#output = np.sort(output, axis = 1)
+#print output
 
