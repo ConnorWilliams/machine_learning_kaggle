@@ -4,7 +4,7 @@ import sklearn.tree as tree
 import sklearn.linear_model as linear_model
 from sklearn.metrics import mean_absolute_error
 from sklearn import svm
-from sklearn.feature_selection import chi2
+from sklearn.feature_selection import f_regression
 np.set_printoptions(threshold=np.nan)
 
 #bASELINE 3.3
@@ -31,8 +31,11 @@ test_feat =   [
             "short_profile_3h_diff_bikes", "short_profile_bikes"]
 
 selectedFeatures = [
-            "weekhour", "isHoliday", "day", "temperature.C",
-            "bikes_3h_ago"]
+            "station", "numDocks",
+            "timestamp", "year", "month", "day", "hour", "weekday", "weekhour", "isHoliday",
+            "windMaxSpeed.m.s", "windMeanSpeed.m.s", "windDirection.grades",
+            "temperature.C", "relHumidity.HR", "airPressure.mb", "precipitation.l.m2",
+            "bikes_3h_ago"          ]
 testTuple = ()
 trainTuple = ()
 for x in selectedFeatures:
@@ -90,6 +93,7 @@ training_target = np.genfromtxt(filestring, dtype=float, comments='#', delimiter
 
 #print training_target
 #print training_features 
-scores, pvalues = chi2(training_features,training_target )
-print pvalues
+scores, pvalues = f_regression(training_features,training_target )
+for x in range(0,pvalues.size):
+  print selectedFeatures[x] + ' '+ str(pvalues[x])
 
