@@ -5,6 +5,9 @@ import sklearn.linear_model as linear_model
 from sklearn.metrics import mean_absolute_error
 from sklearn.feature_selection import VarianceThreshold
 from sklearn import svm
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_regression
+from sklearn.feature_selection import chi2
 np.set_printoptions(threshold=np.nan)
 
 #BASELINE 3.3
@@ -30,8 +33,12 @@ test_feat =   [
             "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
             "short_profile_3h_diff_bikes", "short_profile_bikes"]
 
-selectedFeatures = ["bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
-                    "short_profile_3h_diff_bikes", "short_profile_bikes", "numDocks"]
+selectedFeatures = ["numDocks",
+                    "timestamp", "day", "hour", "weekday", "weekhour", "isHoliday",
+                    "windMaxSpeed.m.s", "windMeanSpeed.m.s", "windDirection.grades",
+                    "temperature.C", "relHumidity.HR", "airPressure.mb", "precipitation.l.m2",
+                    "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
+                    "short_profile_3h_diff_bikes", "short_profile_bikes"]
 testTuple = ()
 trainTuple = ()
 for x in selectedFeatures:
@@ -46,7 +53,7 @@ test_features = np.genfromtxt(test_file, dtype=float, comments='#', delimiter=',
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
-print test_features
+#print test_features
 if mock:
     truevalues  = np.genfromtxt(test_file, dtype=float, comments='#', delimiter=',',
                 skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
@@ -63,7 +70,7 @@ predicted = []
 for x in range(201,276):
     filestring = 'Train/station_' +str(x) +'_deploy.csv'
     # Read in training and test data
-    training_features = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
+    X = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
             skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
             filling_values=0, usecols=trainTuple,
             names=None, excludelist=None, deletechars=None, replace_space='_',
@@ -80,7 +87,12 @@ for x in range(201,276):
     # sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
     # sel.fit_transform(training_features)
 
-    clf = linear_model.LinearRegression()
+    print X.shape
+    print SelectKBest(f_regression, k=6).fit_transform(X, training_target)
+    training_features = SelectKBest(f_regression, k=6).fit_transform(X, training_target)
+    print training_features.shape
+
+    clf = svm.SVR()
     clf.fit (training_features, training_target)
     preds = clf.predict(test_features)
     idx = (x-201)*30
