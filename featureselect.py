@@ -1,8 +1,16 @@
 import sys
 import numpy as np
+
+# Feature selectors
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_regression
+
+# Classifiers
 from sklearn import linear_model
 from sklearn import svm
 from sklearn.metrics import mean_absolute_error
+
 np.set_printoptions(threshold=np.nan)
 
 # Command line arguments
@@ -35,7 +43,8 @@ test_feat =    ["Id","station","latitude","longitude","numDocks","timestamp",
                 "bikes_3h_ago","full_profile_3h_diff_bikes","full_profile_bikes",
                 "short_profile_3h_diff_bikes","short_profile_bikes"]
 
-selectedFeatures = ["timestamp","day","hour","weekday","weekhour","isHoliday","windMaxSpeed.m.s",
+selectedFeatures = ["station","latitude","longitude","numDocks","timestamp","year",
+                "month","day","hour","weekday","weekhour","isHoliday","windMaxSpeed.m.s",
                 "windMeanSpeed.m.s","windDirection.grades","temperature.C",
                 "relHumidity.HR","airPressure.mb","precipitation.l.m2",
                 "bikes_3h_ago","full_profile_3h_diff_bikes","full_profile_bikes",
@@ -87,16 +96,27 @@ for x in range(201,276):
         autostrip=False, case_sensitive=True, defaultfmt='f%i',
         unpack=None, usemask=False, loose=True, invalid_raise=True)
 
-    # Generate a model for this particular station
-    clf = linear_model.LinearRegression()
-    clf.fit (training_features, training_target)
-    #print 'Coefficients: \n\t', clf.coef_
-
-    # Only predict for the 30 test instances for this station in the test.csv file
+    # Get the right test features for this station
     station_test_features = []
     first_test = (x-201)*30
     for i in range(first_test,first_test+30):
             station_test_features.append(all_test_features[i].tolist())
+
+    # Select our features
+    # Either by removing ones with low variance
+    selector = VarianceThreshold()
+    training_features = selector.fit_transform(training_features, training_target)
+    station_test_features = selector.transform(station_test_features)
+
+    # Or by K best:
+    # selector = SelectKBest(f_regression, k=10)
+    # training_features = selector.fit_transform(training_features, training_target)
+    # station_test_features = selector.transform(station_test_features)
+
+    # Generate a model for this particular station
+    clf = linear_model.LinearRegression()
+    clf.fit (training_features, training_target)
+    #print 'Coefficients: \n\t', clf.coef_
 
     predictions.extend(clf.predict(station_test_features).tolist())
 
