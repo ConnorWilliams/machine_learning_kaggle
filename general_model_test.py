@@ -1,86 +1,139 @@
+import sys
 import numpy as np
-import matplotlib.pyplot as plt
-import sklearn.tree as tree
-import sklearn.linear_model as linear_model
+
+# Feature selectors
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_regression
+
+# Classifiers
+from sklearn import linear_model
 from sklearn import svm
+from sklearn import tree
+
+from sklearn.metrics import mean_absolute_error
+
 np.set_printoptions(threshold=np.nan)
 
-train_feat =   [
-            "station", "latitude", "longitude", "numDocks",
-            "timestamp", "year", "month", "day", "hour", "weekday", "weekhour", "isHoliday",
-            "windMaxSpeed.m.s", "windMeanSpeed.m.s", "windDirection.grades",
-            "temperature.C", "relHumidity.HR", "airPressure.mb", "precipitation.l.m2",
-            "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
-            "short_profile_3h_diff_bikes", "short_profile_bikes", "bikes"]
-test_feat =   [
-            "Id", "station", "latitude", "longitude", "numDocks",
-            "timestamp", "year", "month", "day", "hour", "weekday", "weekhour", "isHoliday",
-            "windMaxSpeed.m.s", "windMeanSpeed.m.s", "windDirection.grades",
-            "temperature.C", "relHumidity.HR", "airPressure.mb", "precipitation.l.m2",
-            "bikes_3h_ago", "full_profile_3h_diff_bikes", "full_profile_bikes",
-            "short_profile_3h_diff_bikes", "short_profile_bikes"]
+# Command line arguments
+if (len(sys.argv)==1):
+    mock = 0
+    test_file = 'test.csv'
+    print 'Making test predictions...'
+elif (sys.argv)[1] != '-m':
+    mock = 0
+    test_file = 'test.csv'
+    print 'Making test predictions...'
+elif (sys.argv)[1] == '-m':
+    mock = 1
+    test_file = 'mock_test.csv'
+    print 'Running a mock test...'
 
-features_num =  [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+train_feat =   ["station","latitude","longitude","numDocks","timestamp","year",
+                "month","day","hour","weekday","weekhour","isHoliday","windMaxSpeed.m.s",
+                "windMeanSpeed.m.s","windDirection.grades","temperature.C",
+                "relHumidity.HR","airPressure.mb","precipitation.l.m2",
+                "bikes_3h_ago","full_profile_3h_diff_bikes","full_profile_bikes",
+                "short_profile_3h_diff_bikes","short_profile_bikes","bikes"]
 
-# Our target variable is 'bikes'
-target_num = 24
+test_feat =    ["Id","station","latitude","longitude","numDocks","timestamp",
+                "year","month","day","hour","weekday","weekhour","isHoliday",
+                "windMaxSpeed.m.s","windMeanSpeed.m.s","windDirection.grades",
+                "temperature.C","relHumidity.HR","airPressure.mb","precipitation.l.m2",
+                "bikes_3h_ago","full_profile_3h_diff_bikes","full_profile_bikes",
+                "short_profile_3h_diff_bikes","short_profile_bikes"]
 
-# Features to remove: All timestamp info except weekhour...
-#unwanted_features = [4,5,6,7,8,9,24]
+selectedFeatures = ["station","latitude","longitude","numDocks","day",
+                "weekhour","isHoliday","windMaxSpeed.m.s",
+                "windMeanSpeed.m.s","windDirection.grades","temperature.C",
+                "relHumidity.HR","airPressure.mb","precipitation.l.m2",
+                "bikes_3h_ago",
+                "short_profile_3h_diff_bikes","short_profile_bikes"]
 
-# Remove unwanted features.
-# for num in sorted(unwanted_features, reverse=True):
-#     del features_num[num]
-#     del features[num]
-selectedFeatures = ["isHoliday","day","bikes_3h_ago","short_profile_3h_diff_bikes","short_profile_bikes", "temperature.C"]
-testTuple = ()
-trainTuple = ()
+training_feature_cols = ()
+test_feature_cols = ()
+
 for x in selectedFeatures:
-      testIdx = test_feat.index(x)
-      trainIdx = train_feat.index(x)
-      testTuple = testTuple + (testIdx,)
-      trainTuple = trainTuple + (trainIdx,)
+    trainIdx = train_feat.index(x)
+    testIdx = test_feat.index(x)
+    training_feature_cols = training_feature_cols + (trainIdx,)
+    test_feature_cols = test_feature_cols + (testIdx,)
 
-test_features = np.genfromtxt('test.csv', dtype=float, comments='#', delimiter=',',
+test_features = np.genfromtxt(test_file, dtype=float, comments='#', delimiter=',',
                   skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                  filling_values='0', usecols=testTuple,
+                  filling_values='0', usecols=test_feature_cols,
                   names=None, excludelist=None, deletechars=None, replace_space='_',
                   autostrip=False, case_sensitive=True, defaultfmt='f%i',
                   unpack=None, usemask=False, loose=True, invalid_raise=True)
-# Where is our training data stored?
-output = open("gen_sub.csv","w")
+
+if mock:
+    truevalues  = np.genfromtxt(test_file, dtype=float, comments='#', delimiter=',',
+                skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
+                filling_values='0', usecols=25,
+                names=None, excludelist=None, deletechars=None, replace_space='_',
+                autostrip=False, case_sensitive=True, defaultfmt='f%i',
+                unpack=None, usemask=False, loose=True, invalid_raise=True)
+
+output = open("general_sub.csv","w")
 output.write("Id,\"bikes\"" +"\n")
+predictions = []
 
-filestring = 'general_station_train.csv'
-# Read in training and test data
-training_features = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
-                skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                filling_values='0', usecols=trainTuple,
-                names=None, excludelist=None, deletechars=None, replace_space='_',
-                autostrip=False, case_sensitive=True, defaultfmt='f%i',
-                unpack=None, usemask=False, loose=True, invalid_raise=True)
-training_target = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
-                skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
-                filling_values='0', usecols=train_feat.index("bikes"),
-                names=None, excludelist=None, deletechars=None, replace_space='_',
-                autostrip=False, case_sensitive=True, defaultfmt='f%i',
-                unpack=None, usemask=False, loose=True, invalid_raise=True)
+training_file = 'general_station_train.csv'
 
-################################################
-# Put our data through some regression model. #
-################################################
+# Read in the training features and target variable
+training_features = np.genfromtxt(training_file, dtype=float, comments='#', delimiter=',',
+    skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
+    filling_values=0, usecols=training_feature_cols,
+    names=None, excludelist=None, deletechars=None, replace_space='_',
+    autostrip=False, case_sensitive=True, defaultfmt='f%i',
+    unpack=None, usemask=False, loose=True, invalid_raise=True)
+training_target = np.genfromtxt(training_file, dtype=float, comments='#', delimiter=',',
+    skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
+    filling_values=0, usecols=train_feat.index("bikes"),
+    names=None, excludelist=None, deletechars=None, replace_space='_',
+    autostrip=False, case_sensitive=True, defaultfmt='f%i',
+    unpack=None, usemask=False, loose=True, invalid_raise=True)
 
-# Turn weekour in to day hour
-#   training_features[:,2] = training_features[:,2] % 24
-#   test_features[:,2] = test_features[:,2] % 24
+# Select our features
+# Either by removing ones with low variance:
+# selector = VarianceThreshold()
+# training_features = selector.fit_transform(training_features, training_target)
+# station_test_features = selector.transform(station_test_features)
 
-clf = linear_model.LinearRegression()
+# Or by K best:
+selector = SelectKBest(f_regression, k=4)
+training_features = selector.fit_transform(training_features, training_target)
+test_features = selector.transform(test_features)
+
+print '\ntest_features.shape = ', test_features.shape
+print 'training_features.shape = ',training_features.shape
+print 'training_target.shape = ',training_target.shape
+
+# Print the features we have chosen for this station
+print '\nFeatures selcted:'
+for idx in range(0, len(selector.get_support())):
+    if selector.get_support()[idx] == True:
+        print '\t' + str(selectedFeatures[idx])
+print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
+print '\ntest_features 0, 10, 20:\n', test_features[0], '\n', test_features[10], '\n', test_features[25]
+
+# Generate a model for this particular station
+clf = linear_model.LinearRegression(fit_intercept=True, normalize=False, copy_X=True, n_jobs=1)
+# clf = linear_model.Lars(fit_intercept=True, verbose=False, normalize=True, precompute='auto', n_nonzero_coefs=500, eps=2.2204460492503131e-16, copy_X=True, fit_path=True, positive=False)
+# clf = linear_model.Ridge(alpha=1.0, fit_intercept=True, normalize=False, copy_X=True, max_iter=None, tol=0.001, solver='auto', random_state=None)
+# clf = linear_model.BayesianRidge(n_iter=300, tol=0.001, alpha_1=1e-06, alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06, compute_score=False, fit_intercept=True, normalize=False, copy_X=True, verbose=False)
+# clf = linear_model.Perceptron(penalty=None, alpha=0.0001, fit_intercept=True, n_iter=5, shuffle=True, verbose=0, eta0=1.0, n_jobs=1, random_state=0, class_weight=None, warm_start=False)
+# clf = svm.SVR(kernel='rbf', degree=3, gamma='auto', coef0=0.0, tol=0.001, C=1.0, epsilon=0.1, shrinking=True, cache_size=200, verbose=False, max_iter=-1)
+# clf = tree.DecisionTreeRegressor(criterion='mse', splitter='best', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features=None, random_state=None, max_leaf_nodes=None, presort=False)
 clf.fit (training_features, training_target)
-preds = clf.predict(test_features)
-#print preds
-#raw_input("Press Enter to continue...")
+# print 'Coefficients: \n\t', clf.coef_
 
-for y in range(0,preds.size):
-    output.write(str(y+1) + "," + str( preds[y])+ "\n")
+predictions.extend(clf.predict(test_features).tolist())
+
+for p in range(0, len(predictions)):
+    output.write(str(p+1) + "," + str(predictions[p]) +"\n")
 
 output.close()
+
+if mock:
+    print '\nMAE =', mean_absolute_error(truevalues,predictions)

@@ -45,7 +45,7 @@ test_feat =    ["Id","station","latitude","longitude","numDocks","timestamp",
                 "bikes_3h_ago","full_profile_3h_diff_bikes","full_profile_bikes",
                 "short_profile_3h_diff_bikes","short_profile_bikes"]
 
-selectedFeatures = ["numDocks","day","weekhour","isHoliday","windMaxSpeed.m.s",
+selectedFeatures = ["day","weekhour","isHoliday","windMaxSpeed.m.s",
                 "windMeanSpeed.m.s","windDirection.grades","temperature.C",
                 "relHumidity.HR","airPressure.mb","precipitation.l.m2",
                 "bikes_3h_ago",
