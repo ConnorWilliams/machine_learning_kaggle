@@ -82,7 +82,7 @@ predictions = []
 for x in range(201,276):
     filestring = 'Train/station_' +str(x) +'_deploy.csv'
 
-    # Read in the training features and target variable
+# Read in the training features and target variable
     training_features = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
         skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
         filling_values=0, usecols=training_feature_cols,
@@ -96,24 +96,33 @@ for x in range(201,276):
         autostrip=False, case_sensitive=True, defaultfmt='f%i',
         unpack=None, usemask=False, loose=True, invalid_raise=True)
 
-    # Get the right test features for this station
+# Get the right test features for this station
     station_test_features = []
     first_test = (x-201)*30
     for i in range(first_test,first_test+30):
             station_test_features.append(all_test_features[i].tolist())
 
-    # Select our features
-    # Either by removing ones with low variance
-    selector = VarianceThreshold()
-    training_features = selector.fit_transform(training_features, training_target)
-    station_test_features = selector.transform(station_test_features)
-
-    # Or by K best:
-    # selector = SelectKBest(f_regression, k=10)
+# Select our features
+# Either by removing ones with low variance:
+    # selector = VarianceThreshold()
     # training_features = selector.fit_transform(training_features, training_target)
     # station_test_features = selector.transform(station_test_features)
 
-    # Generate a model for this particular station
+# Or by K best:
+    selector = SelectKBest(f_regression, k=10)
+    training_features = selector.fit_transform(training_features, training_target)
+    station_test_features = selector.transform(station_test_features)
+
+# Print the features we have chosen for this station
+    # print '\nFeatures for station ' + str(x) + ':'
+    # for idx in range(0, len(selector.get_support())):
+    #     if selector.get_support()[idx] == True:
+    #         print '\t' + str(selectedFeatures[idx])
+    # print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
+    # print '\nstation_test_features 0, 10, 20:\n', station_test_features[0], '\n', station_test_features[10], '\n', station_test_features[25]
+    # raw_input("Press enter...")
+
+# Generate a model for this particular station
     clf = linear_model.LinearRegression()
     clf.fit (training_features, training_target)
     #print 'Coefficients: \n\t', clf.coef_
