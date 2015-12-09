@@ -45,11 +45,10 @@ test_feat =    ["Id","station","latitude","longitude","numDocks","timestamp",
                 "bikes_3h_ago","full_profile_3h_diff_bikes","full_profile_bikes",
                 "short_profile_3h_diff_bikes","short_profile_bikes"]
 
-selectedFeatures = ["station","latitude","longitude","numDocks","timestamp","year",
-                "month","day","hour","weekday","weekhour","isHoliday","windMaxSpeed.m.s",
+selectedFeatures = ["numDocks","day","weekhour","isHoliday","windMaxSpeed.m.s",
                 "windMeanSpeed.m.s","windDirection.grades","temperature.C",
                 "relHumidity.HR","airPressure.mb","precipitation.l.m2",
-                "bikes_3h_ago","full_profile_3h_diff_bikes","full_profile_bikes",
+                "bikes_3h_ago",
                 "short_profile_3h_diff_bikes","short_profile_bikes"]
 
 training_feature_cols = ()
@@ -82,7 +81,7 @@ predictions = []
 
 # For all test data files
 for x in range(201,276):
-    filestring = 'Train/station_' +str(x) +'_deploy.csv'
+    filestring = 'Train/station_' +str(x)+'_deploy.csv'
 
 # Read in the training features and target variable
     training_features = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
@@ -111,18 +110,18 @@ for x in range(201,276):
     # station_test_features = selector.transform(station_test_features)
 
 # Or by K best:
-    selector = SelectKBest(f_regression, k=10)
+    selector = SelectKBest(f_regression, k=4)
     training_features = selector.fit_transform(training_features, training_target)
     station_test_features = selector.transform(station_test_features)
 
 # Print the features we have chosen for this station
-    # print '\nFeatures for station ' + str(x) + ':'
-    # for idx in range(0, len(selector.get_support())):
-    #     if selector.get_support()[idx] == True:
-    #         print '\t' + str(selectedFeatures[idx])
-    # print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
-    # print '\nstation_test_features 0, 10, 20:\n', station_test_features[0], '\n', station_test_features[10], '\n', station_test_features[25]
-    # raw_input("Press enter...")
+    print '\nFeatures for station ' + str(x) + ':'
+    for idx in range(0, len(selector.get_support())):
+        if selector.get_support()[idx] == True:
+            print '\t' + str(selectedFeatures[idx])
+    print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
+    print '\nstation_test_features 0, 10, 20:\n', station_test_features[0], '\n', station_test_features[10], '\n', station_test_features[25]
+    raw_input("Press enter...")
 
 # Generate a model for this particular station
     clf = linear_model.LinearRegression(fit_intercept=True, normalize=False, copy_X=True, n_jobs=1)
