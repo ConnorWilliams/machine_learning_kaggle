@@ -14,22 +14,20 @@ from sklearn import tree
 from sklearn.metrics import mean_absolute_error
 
 np.set_printoptions(threshold=np.nan)
-
+execfile("./test_gen.py")
 # Command line arguments
 if (len(sys.argv)==1):
     mock = 0
+    test_file = 'test.csv'
     print 'Making test predictions...'
 elif (sys.argv)[1] != '-m':
     mock = 0
+    test_file = 'mock_test.csv'
     print 'Making test predictions...'
 elif (sys.argv)[1] == '-m':
     mock = 1
-    print 'Running a mock test...'
-
-if (mock == 0):
-    test_file = 'test.csv'
-elif (mock == 1):
     test_file = 'mock_test.csv'
+    print 'Running a mock test...'
 
 train_feat =   ["station","latitude","longitude","numDocks","timestamp","year",
                 "month","day","hour","weekday","weekhour","isHoliday","windMaxSpeed.m.s",
@@ -74,6 +72,12 @@ if mock:
                 names=None, excludelist=None, deletechars=None, replace_space='_',
                 autostrip=False, case_sensitive=True, defaultfmt='f%i',
                 unpack=None, usemask=False, loose=True, invalid_raise=True)
+    baseline  = np.genfromtxt(test_file, dtype=float, comments='#', delimiter=',',
+            skip_header=1, skip_footer=0, converters=None, missing_values={"NA"},
+            filling_values='0', usecols=test_feat.index("bikes_3h_ago"),
+            names=None, excludelist=None, deletechars=None, replace_space='_',
+            autostrip=False, case_sensitive=True, defaultfmt='f%i',
+            unpack=None, usemask=False, loose=True, invalid_raise=True)
 
 output = open("individual_sub.csv","w")
 output.write("Id,\"bikes\"" +"\n")
@@ -81,7 +85,10 @@ predictions = []
 
 # For all test data files
 for x in range(201,276):
-    filestring = 'Train/station_' +str(x)+'_deploy.csv'
+    if mock:
+        filestring = 'Train/mock_station_' +str(x)+'_deploy.csv'
+    else:
+        filestring = 'Train/station_' +str(x)+'_deploy.csv'
 
 # Read in the training features and target variable
     training_features = np.genfromtxt(filestring, dtype=float, comments='#', delimiter=',',
@@ -115,16 +122,16 @@ for x in range(201,276):
     station_test_features = selector.transform(station_test_features)
 
 # Print the features we have chosen for this station
-    print '\nFeatures for station ' + str(x) + ':'
-    for idx in range(0, len(selector.get_support())):
-        if selector.get_support()[idx] == True:
-            print '\t' + str(selectedFeatures[idx])
-    print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
-    print '\nstation_test_features 0, 10, 20:\n', station_test_features[0], '\n', station_test_features[10], '\n', station_test_features[25]
-    raw_input("Press enter...")
+    # print '\nFeatures for station ' + str(x) + ':'
+    # for idx in range(0, len(selector.get_support())):
+    #     if selector.get_support()[idx] == True:
+    #         print '\t' + str(selectedFeatures[idx])
+    # print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
+    # print '\nstation_test_features 0, 10, 20:\n', station_test_features[0], '\n', station_test_features[10], '\n', station_test_features[25]
+    # raw_input("Press enter...")
 
 # Generate a model for this particular station
-    # clf = linear_model.LinearRegression(fit_intercept=True, normalize=False, copy_X=True, n_jobs=1)
+    clf = linear_model.LinearRegression(fit_intercept=True, normalize=False, copy_X=True, n_jobs=1)
     # clf = linear_model.Lars(fit_intercept=True, verbose=False, normalize=True, precompute='auto', n_nonzero_coefs=500, eps=2.2204460492503131e-16, copy_X=True, fit_path=True, positive=False)
     # clf = linear_model.Ridge(alpha=1.0, fit_intercept=True, normalize=False, copy_X=True, max_iter=None, tol=0.001, solver='auto', random_state=None)
     # clf = linear_model.BayesianRidge(n_iter=300, tol=0.001, alpha_1=1e-06, alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06, compute_score=False, fit_intercept=True, normalize=False, copy_X=True, verbose=False)
@@ -142,4 +149,5 @@ for p in range(0, len(predictions)):
 output.close()
 
 if mock:
+    print '\nBASELINE MAE =', mean_absolute_error(truevalues,baseline)
     print 'MAE =', mean_absolute_error(truevalues,predictions)

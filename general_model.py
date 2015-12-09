@@ -87,7 +87,7 @@ predictions = []
 if mock:
     training_file = 'mock_general_station_train.csv'
 else:
-    training_file = 'general_station_train.csv'    
+    training_file = 'general_station_train.csv'
 
 # Read in the training features and target variable
 training_features = np.genfromtxt(training_file, dtype=float, comments='#', delimiter=',',
@@ -127,18 +127,17 @@ print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_
 print '\ntest_features 0, 10, 20:\n', test_features[0], '\n', test_features[10], '\n', test_features[25]
 
 # Generate a model for this particular station
-#clf = linear_model.LinearRegression(fit_intercept=True, normalize=False, copy_X=True, n_jobs=1)
-#clf = linear_model.Lars(fit_intercept=True, verbose=False, normalize=True, precompute='auto', n_nonzero_coefs=500, eps=2.2204460492503131e-16, copy_X=True, fit_path=True, positive=False)
-clf = linear_model.Ridge(alpha=1.0, fit_intercept=True, normalize=False, copy_X=True, max_iter=None, tol=0.001, solver='auto', random_state=None)
+clf = linear_model.LinearRegression(fit_intercept=True, normalize=False, copy_X=True, n_jobs=1)
+# clf = linear_model.Lars(fit_intercept=True, verbose=False, normalize=True, precompute='auto', n_nonzero_coefs=500, eps=2.2204460492503131e-16, copy_X=True, fit_path=True, positive=False)
+# clf = linear_model.Ridge(alpha=1.0, fit_intercept=True, normalize=False, copy_X=True, max_iter=None, tol=0.001, solver='auto', random_state=None)
 # clf = linear_model.BayesianRidge(n_iter=300, tol=0.001, alpha_1=1e-06, alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06, compute_score=False, fit_intercept=True, normalize=False, copy_X=True, verbose=False)
-#clf = linear_model.Perceptron(penalty=None, alpha=0.0001, fit_intercept=True, n_iter=5, shuffle=True, verbose=0, eta0=1.0, n_jobs=1, random_state=0, class_weight=None, warm_start=False)
-#clf = svm.SVR(kernel='rbf', degree=3, gamma='auto', coef0=0.0, tol=0.001, C=1.0, epsilon=0.1, shrinking=True, cache_size=200, verbose=False, max_iter=-1)
+# clf = linear_model.Perceptron(penalty=None, alpha=0.0001, fit_intercept=True, n_iter=5, shuffle=True, verbose=0, eta0=1.0, n_jobs=1, random_state=0, class_weight=None, warm_start=False)
+# clf = svm.SVR(kernel='rbf', degree=3, gamma='auto', coef0=0.0, tol=0.001, C=1.0, epsilon=0.1, shrinking=True, cache_size=200, verbose=False, max_iter=-1)
 # clf = tree.DecisionTreeRegressor(criterion='mse', splitter='best', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features=None, random_state=None, max_leaf_nodes=None, presort=False)
 clf.fit (training_features, training_target)
 # print 'Coefficients: \n\t', clf.coef_
 
 predictions.extend(clf.predict(test_features).tolist())
-
 
 for p in range(0, len(predictions)):
     output.write(str(p+1) + "," + str(predictions[p]) +"\n")
@@ -146,6 +145,5 @@ for p in range(0, len(predictions)):
 output.close()
 
 if mock:
-    print '\nMAE =', mean_absolute_error(truevalues,predictions)
     print '\nBASELINE MAE =', mean_absolute_error(truevalues,baseline)
-
+    print 'MAE =', mean_absolute_error(truevalues,predictions)
