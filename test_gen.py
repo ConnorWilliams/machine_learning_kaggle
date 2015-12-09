@@ -3,7 +3,7 @@ import numpy as np
 
 
 # This just concatenates all the training data in to one big csv file.
-fout_train=open("general_station_train.csv","w")
+fout_train=open("mock_general_station_train.csv","w")
 # This makes a mock test csv file.
 fout_test=open("mock_test.csv","w")
 # first line:

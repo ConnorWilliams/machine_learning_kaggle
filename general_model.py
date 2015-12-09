@@ -78,7 +78,10 @@ output = open("general_sub.csv","w")
 output.write("Id,\"bikes\"" +"\n")
 predictions = []
 
-training_file = 'general_station_train.csv'
+if mock:
+    training_file = 'mock_general_station_train.csv'
+else:
+    training_file = 'general_station_train.csv'    
 
 # Read in the training features and target variable
 training_features = np.genfromtxt(training_file, dtype=float, comments='#', delimiter=',',
