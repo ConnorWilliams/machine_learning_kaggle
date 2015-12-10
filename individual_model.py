@@ -22,7 +22,7 @@ if (len(sys.argv)==1):
     print 'Making test predictions...'
 elif (sys.argv)[1] != '-m':
     mock = 0
-    test_file = 'mock_test.csv'
+    test_file = 'test.csv'
     print 'Making test predictions...'
 elif (sys.argv)[1] == '-m':
     mock = 1
