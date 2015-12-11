@@ -53,8 +53,8 @@ phase2 = np.genfromtxt('phase2.csv', dtype=float, comments='#', delimiter=',',
         unpack=None, usemask=False, loose=True, invalid_raise=True)
 
 
-output = open("phase3.csv","w")
-output.write("Id,\"bikes\"" +"\n")
+# output = open("phase3.csv","w")
+# output.write("Id,\"bikes\"" +"\n")
 predictions = []
 P1_WEIGHT = 1
 P2_WEIGHT = 1
@@ -62,8 +62,8 @@ for x in range(0,len(phase2)):
     predictions.append((phase1[x]*P1_WEIGHT+phase2[x]*P2_WEIGHT)/(P2_WEIGHT+P1_WEIGHT))
 
 
-for p in range(0, len(predictions)):
-    output.write(str(p+1) + "," + str(predictions[p]) +"\n")
+# for p in range(0, len(predictions)):
+#     output.write(str(p+1) + "," + str(predictions[p]) +"\n")
 
 if mock:
     print '\nBASELINE MAE =', mean_absolute_error(truevalues,baseline)
