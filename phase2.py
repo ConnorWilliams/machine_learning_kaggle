@@ -16,18 +16,21 @@ from sklearn.metrics import mean_absolute_error
 np.set_printoptions(threshold=np.nan)
 #execfile("./test_gen.py")
 # Command line arguments
-if (len(sys.argv)==1):
-    mock = 0
-    test_file = 'test.csv'
-    print 'Making test predictions...'
-elif (sys.argv)[1] != '-m':
-    mock = 0
-    test_file = 'test.csv'
-    print 'Making test predictions...'
-elif (sys.argv)[1] == '-m':
-    mock = 1
-    test_file = 'mock_test.csv'
-    print 'Running a mock test...'
+# if (len(sys.argv)==1):
+#     mock = 0
+#     test_file = 'test.csv'
+#     print 'Making test predictions...'
+# elif (sys.argv)[1] != '-m':
+#     mock = 0
+#     test_file = 'test.csv'
+#     print 'Making test predictions...'
+# elif (sys.argv)[1] == '-m':
+#     mock = 1
+#     test_file = 'mock_test.csv'
+#     print 'Running a mock test...'
+mock = 1
+test_file = 'mock_test.csv'
+print 'Running a mock test...'
 
 train_feat =   ["station","latitude","longitude","numDocks","timestamp","year",
                 "month","day","hour","weekday","weekhour","isHoliday","windMaxSpeed.m.s",
@@ -116,17 +119,17 @@ training_features = selector.fit_transform(training_features, training_target)
 test_features = selector.transform(test_features)
 
 
-print '\ntest_features.shape = ', test_features.shape
-print 'training_features.shape = ',training_features.shape
-print 'training_target.shape = ',training_target.shape
+# print '\ntest_features.shape = ', test_features.shape
+# print 'training_features.shape = ',training_features.shape
+# print 'training_target.shape = ',training_target.shape
 
-# Print the features we have chosen for this station
-print '\nFeatures selcted:'
-for idx in range(0, len(selector.get_support())):
-    if selector.get_support()[idx] == True:
-        print '\t' + str(selectedFeatures[idx])
-print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
-print '\ntest_features 0, 10, 20:\n', test_features[0], '\n', test_features[10], '\n', test_features[25]
+# # Print the features we have chosen for this station
+# print '\nFeatures selcted:'
+# for idx in range(0, len(selector.get_support())):
+#     if selector.get_support()[idx] == True:
+#         print '\t' + str(selectedFeatures[idx])
+# print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
+# print '\ntest_features 0, 10, 20:\n', test_features[0], '\n', test_features[10], '\n', test_features[25]
 
 # Generate a model for this particular station
 clf = linear_model.LinearRegression(fit_intercept=True, normalize=False, copy_X=True, n_jobs=1)
@@ -138,7 +141,7 @@ clf = linear_model.LinearRegression(fit_intercept=True, normalize=False, copy_X=
 # clf = tree.DecisionTreeRegressor(criterion='mse', splitter='best', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features=None, random_state=None, max_leaf_nodes=None, presort=False)
 clf.fit (training_features, training_target)
 # print 'Coefficients: \n\t', clf.coef_
-print "COEFS",clf.coef_
+# print "COEFS",clf.coef_
 # clf.intercept_ = 0.171565194272
 # clf.coef_[0] = 0.745745717214
 # clf.coef_[1] = 0.229370444058
@@ -164,7 +167,7 @@ for p in range(0, len(predictions)):
 
 output.close()
 
-if mock:
-    print '\nBASELINE MAE =', mean_absolute_error(truevalues,baseline)
-    print 'MAE =', mean_absolute_error(truevalues,predictions)
-    print 'DIFFERENCE',mean_absolute_error(truevalues,predictions)-mean_absolute_error(truevalues,baseline)
+# if mock:
+#     print '\nBASELINE MAE =', mean_absolute_error(truevalues,baseline)
+#     print 'MAE =', mean_absolute_error(truevalues,predictions)
+#     print 'DIFFERENCE',mean_absolute_error(truevalues,predictions)-mean_absolute_error(truevalues,baseline)

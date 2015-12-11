@@ -16,19 +16,21 @@ from sklearn.metrics import mean_absolute_error
 np.set_printoptions(threshold=np.nan)
 execfile("./test_gen.py")
 # Command line arguments
-if (len(sys.argv)==1):
-    mock = 0
-    test_file = 'test.csv'
-    print 'Making test predictions...'
-elif (sys.argv)[1] != '-m':
-    mock = 0
-    test_file = 'test.csv'
-    print 'Making test predictions...'
-elif (sys.argv)[1] == '-m':
-    mock = 1
-    test_file = 'mock_test.csv'
-    print 'Running a mock test...'
-
+# if (len(sys.argv)==1):
+#     mock = 0
+#     test_file = 'test.csv'
+#     print 'Making test predictions...'
+# elif (sys.argv)[1] != '-m':
+#     mock = 0
+#     test_file = 'test.csv'
+#     print 'Making test predictions...'
+# elif (sys.argv)[1] == '-m':
+#     mock = 1
+#     test_file = 'mock_test.csv'
+#     print 'Running a mock test...'
+mock = 1
+test_file = 'mock_test.csv'
+print 'Running a mock test...'
 train_feat =   ["station","latitude","longitude","numDocks","timestamp","year",
                 "month","day","hour","weekday","weekhour","isHoliday","windMaxSpeed.m.s",
                 "windMeanSpeed.m.s","windDirection.grades","temperature.C",
@@ -114,17 +116,17 @@ selector = SelectKBest(f_regression, k=9)
 training_features = selector.fit_transform(training_features, training_target)
 test_features = selector.transform(test_features)
 
-print '\ntest_features.shape = ', test_features.shape
-print 'training_features.shape = ',training_features.shape
-print 'training_target.shape = ',training_target.shape
+# print '\ntest_features.shape = ', test_features.shape
+# print 'training_features.shape = ',training_features.shape
+# print 'training_target.shape = ',training_target.shape
 
-# Print the features we have chosen for this station
-print '\nFeatures selcted:'
-for idx in range(0, len(selector.get_support())):
-    if selector.get_support()[idx] == True:
-        print '\t' + str(selectedFeatures[idx])
-print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
-print '\ntest_features 0, 10, 20:\n', test_features[0], '\n', test_features[10], '\n', test_features[25]
+# # Print the features we have chosen for this station
+# print '\nFeatures selcted:'
+# for idx in range(0, len(selector.get_support())):
+#     if selector.get_support()[idx] == True:
+#         print '\t' + str(selectedFeatures[idx])
+# print '\ntraining_features 0, 10, 235:\n', training_features[0], '\n', training_features[10], '\n', training_features[235]
+# print '\ntest_features 0, 10, 20:\n', test_features[0], '\n', test_features[10], '\n', test_features[25]
 
 # Generate a model for this particular station
 #clf = linear_model.LinearRegression(fit_intercept=True, normalize=False, copy_X=True, n_jobs=1)
@@ -144,6 +146,6 @@ for p in range(0, len(predictions)):
 
 output.close()
 
-if mock:
-    print '\nBASELINE MAE =', mean_absolute_error(truevalues,baseline)
-    print 'MAE =', mean_absolute_error(truevalues,predictions)
+# if mock:
+#     print '\nBASELINE MAE =', mean_absolute_error(truevalues,baseline)
+#     print 'MAE =', mean_absolute_error(truevalues,predictions)
