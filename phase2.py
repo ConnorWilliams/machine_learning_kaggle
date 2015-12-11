@@ -14,7 +14,7 @@ from sklearn import tree
 from sklearn.metrics import mean_absolute_error
 
 np.set_printoptions(threshold=np.nan)
-execfile("./test_gen.py")
+#execfile("./test_gen.py")
 # Command line arguments
 if (len(sys.argv)==1):
     mock = 0
@@ -46,9 +46,10 @@ test_feat =    ["Id","station","latitude","longitude","numDocks","timestamp",
 selectedFeatures = ["bikes_3h_ago",
 "short_profile_bikes",
 "short_profile_3h_diff_bikes",
-"full_profile_bikes",
-"full_profile_3h_diff_bikes",
-"temperature.C"]
+#"full_profile_bikes",
+#"full_profile_3h_diff_bikes",
+#"temperature.C"
+]
 
 training_feature_cols = ()
 test_feature_cols = ()
@@ -80,7 +81,7 @@ if mock:
             autostrip=False, case_sensitive=True, defaultfmt='f%i',
             unpack=None, usemask=False, loose=True, invalid_raise=True)
 
-output = open("general_sub.csv","w")
+output = open("phase2.csv","w")
 output.write("Id,\"bikes\"" +"\n")
 predictions = []
 
@@ -110,7 +111,7 @@ training_target = np.genfromtxt(training_file, dtype=float, comments='#', delimi
 # station_test_features = selector.transform(station_test_features)
 
 # Or by K best:
-selector = SelectKBest(f_regression, k=6)
+selector = SelectKBest(f_regression, k=3)
 training_features = selector.fit_transform(training_features, training_target)
 test_features = selector.transform(test_features)
 
@@ -142,13 +143,17 @@ print "COEFS",clf.coef_
 # clf.coef_[0] = 0.745745717214
 # clf.coef_[1] = 0.229370444058
 # clf.coef_[2] = 0.571453414447
-clf.intercept_ = 0.30381645061
-clf.coef_[0] = 0.744290931563
-clf.coef_[1] = 0.0643842157692
-clf.coef_[2] = 0.223470461553
-clf.coef_[3] = 0.16065454214
-clf.coef_[4] = 0.36816804663
-clf.coef_[5] = -0.00470908330151
+clf.intercept_ = 0.679605102608
+clf.coef_[0] = 0.746599471027
+clf.coef_[1] = 0.159064132418
+clf.coef_[2] = 0.472205363294 
+# clf.intercept_ = 0.30381645061
+# clf.coef_[0] = 0.744290931563
+# clf.coef_[1] = 0.0643842157692
+# clf.coef_[2] = 0.223470461553
+# clf.coef_[3] = 0.16065454214
+# clf.coef_[4] = 0.36816804663
+# clf.coef_[5] = -0.00470908330151
 
 
 print "COEFS",clf.coef_

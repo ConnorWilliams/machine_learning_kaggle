@@ -5,10 +5,10 @@ import numpy as np
 totals = [0,0,0,0,0,0,0]
 idx = 1
 for x in range(1,201):
-    filestring = 'Models/model_station_' +str(x) +'_rlm_short_full_temp.csv'
+    filestring = 'Models/model_station_' +str(x) +'_rlm_short_full.csv'
     f = open(filestring, 'r')
     filelines = f.readlines()
-    for i in range(1,8):
+    for i in range(1,7):
         line = filelines[i].split(',')
         #print 'hour' + line[10] + ' bikes' + line[24]
         #print 'hour' + trueline[10] + ' bikes' + trueline[24]
